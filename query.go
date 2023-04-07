@@ -74,7 +74,7 @@ func setColumnType(logContext, columnName string, ctype columnType, columnTypes 
 
 // Collect is the equivalent of prometheus.Collector.Collect() but takes a context to run in and a database to run on.
 func (q *Query) Collect(ctx context.Context, conn *sql.DB, ch chan<- Metric) {
-	ctx, cancel := context.WithTimeout(context.Background(), 600*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, 600*time.Second)
 	defer cancel()
 	if ctx.Err() != nil {
 		ch <- NewInvalidMetric(errors.Wrap(q.logContext, ctx.Err()))
@@ -111,7 +111,7 @@ func (q *Query) Collect(ctx context.Context, conn *sql.DB, ch chan<- Metric) {
 
 // run executes the query on the provided database, in the provided context.
 func (q *Query) run(ctx context.Context, conn *sql.DB) (*sql.Rows, errors.WithContext) {
-	ctx, cancel := context.WithTimeout(context.Background(), 600*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, 600*time.Second)
 	defer cancel()
 	if q.conn != nil && q.conn != conn {
 		panic(fmt.Sprintf("[%s] Expecting to always run on the same database handle", q.logContext))

@@ -1,0 +1,4 @@
+go mod init
+go mod tidy
+go mod vendor
+GOOS=windows GOARCH=amd64 go build -o ./build/mssql_exporter.exe

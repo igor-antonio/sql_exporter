@@ -5,6 +5,7 @@ import (
 	"database/sql/driver"
 	"encoding/json"
 	"errors"
+	"time"
 )
 
 type copyin struct {
@@ -20,7 +21,10 @@ type serializableBulkConfig struct {
 }
 
 func (d *Driver) OpenConnection(dsn string) (*Conn, error) {
-	return d.open(context.Background(), dsn)
+	ctx := context.Background()
+	ctx, cancel := context.WithTimeout(ctx, 600*time.Second)
+	defer cancel()
+	return d.open(ctx, dsn)
 }
 
 func (c *Conn) prepareCopyIn(ctx context.Context, query string) (_ driver.Stmt, err error) {

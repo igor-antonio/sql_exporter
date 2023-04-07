@@ -74,6 +74,7 @@ func ExporterHandlerFor(exporter sql_exporter.Exporter) http.Handler {
 func contextFor(req *http.Request, exporter sql_exporter.Exporter) (context.Context, context.CancelFunc) {
 	timeout := time.Duration(0)
 	configTimeout := time.Duration(exporter.Config().Globals.ScrapeTimeout)
+	log.Infof("ScrapTimeout %q", configTimeout)
 	// If a timeout is provided in the Prometheus header, use it.
 	if v := req.Header.Get("X-Prometheus-Scrape-Timeout-Seconds"); v != "" {
 		timeoutSeconds, err := strconv.ParseFloat(v, 64)
@@ -102,6 +103,7 @@ func contextFor(req *http.Request, exporter sql_exporter.Exporter) (context.Cont
 		return context.Background(), func() {}
 	}
 	return context.WithTimeout(context.Background(), timeout)
+	//return context.WithTimeout(context.Background(), 10*time.Minute)
 }
 
 var bufPool sync.Pool
